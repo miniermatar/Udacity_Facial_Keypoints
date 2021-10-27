@@ -41,16 +41,16 @@ class Net(nn.Module):
         self.pool = nn.MaxPool2d(2, 2)
         
         # 512 outputs * the 12*12 filtered/pooled map size
-        self.fc1 = nn.Linear(512*12*12, 10240)
+        self.fc1 = nn.Linear(512*12*12, 2048)
         
         # dropout with p=0.3
         self.fc1_drop = nn.Dropout(p=0.3)
         
         
-        self.fc2 = nn.Linear(10240, 5120)
+        self.fc2 = nn.Linear(2048, 1024)
         # dropout with p=0.1
         self.fc2_drop = nn.Dropout(p=0.1)
-        self.fc3 = nn.Linear(5120, 136)
+        self.fc3 = nn.Linear(1024, 136)
 
 
 
