@@ -31,17 +31,29 @@ class Net(nn.Module):
         ### output size = (W-F)/S +1 = (54-3)/1 +1 = 52
         # the output Tensor for one image, will have the dimensions: (256, 52, 52)
         # after one pool layer, this becomes (256, 26, 26)
-        self.conv3 = nn.Conv2d(128, 256, 3)
+        self.conv3 = nn.Conv2d(128, 512, 3)
         ### output size = (W-F)/S +1 = (26-3)/1 +1 = 24
         # the output Tensor for one image, will have the dimensions: (512, 24, 24)
         # after one pool layer, this becomes (512, 12, 12)
-        self.conv4 = nn.Conv2d(256, 512, 3)
+        self.conv4 = nn.Conv2d(512, 1024, 3)
+        ### output size = (W-F)/S +1 = (12-3)/1 +1 = 10
+        # the output Tensor for one image, will have the dimensions: (1024, 10, 10)
+        # after one pool layer, this becomes (1024, 5, 5)
+        self.conv5 = nn.Conv2d(1024, 2048, 2)
+        ### output size = (W-F)/S +1 = (5-2)/1 +1 = 4
+        # the output Tensor for one image, will have the dimensions: (2048, 4, 4)
+        # after one pool layer, this becomes (2048, 2, 2)
+        self.conv6 = nn.Conv2d(2048, 4096, 2)
+
+
         ## Note that among the layers to add, consider including:
-        # maxpooling layers, multiple conv layers, fully-connected layers, and other layers (such as dropout or batch normalization) to avoid overfitting
+        # maxpooling layers, multiple conv layers, fully-connected layers, and other layers (such as dropout or batch normalization) to avoid overfitting             
+        
+        
         self.pool = nn.MaxPool2d(2, 2)
         
-        # 512 outputs * the 12*12 filtered/pooled map size
-        self.fc1 = nn.Linear(512*12*12, 2048)
+        # 4096 outputs * the 1*1 filtered/pooled map size
+        self.fc1 = nn.Linear(4096*2*2, 2048)
         
         # dropout with p=0.3
         self.fc1_drop = nn.Dropout(p=0.3)
@@ -66,6 +78,9 @@ class Net(nn.Module):
         x = self.pool(F.relu(self.conv2(x)))
         x = self.pool(F.relu(self.conv3(x)))
         x = self.pool(F.relu(self.conv4(x)))
+        x = self.pool(F.relu(self.conv5(x)))
+        x = self.pool(F.relu(self.conv6(x)))
+        
         # prep for linear layer
         # this line of code is the equivalent of Flatten in Keras
         x = x.view(x.size(0), -1)
